@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 // import Navbar from "../../components/Navbar";
+import { Skeleton } from "@/app/components/ui/skeleton";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { Briefcase, Filter, MapPin, Search } from "lucide-react";
@@ -20,7 +21,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../components/ui/tabs";
-import { Skeleton } from "@/app/components/ui/skeleton";
 
 interface Job {
   id: string;
@@ -174,6 +174,7 @@ const Jobs = () => {
       postedFilters.pastMonth
     ) {
       filtered = filtered.filter((job) => {
+        console.log(job);
         // This is a placeholder - you'd need to compare actual dates
         return true;
       });

@@ -38,6 +38,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../components/ui/tabs";
+import Image from "next/image";
 
 const resumeSample = {
   name: "Sarah Johnson",
@@ -136,7 +137,9 @@ const Resume = () => {
                   </CardHeader>
                   <CardContent className="pb-3">
                     <div className="aspect-[8.5/11] bg-white dark:bg-gray-800 border rounded-md shadow-sm overflow-hidden relative">
-                      <img
+                      <Image
+                        height={300}
+                        width={300}
                         src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=600&h=800&q=80"
                         alt="Resume Preview"
                         className="absolute inset-0 object-cover w-full h-full opacity-10"

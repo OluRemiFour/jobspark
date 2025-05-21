@@ -1,12 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../../../components/ui/dialog";
 import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
 import {
@@ -17,6 +8,7 @@ import {
 } from "@/app/components/ui/tabs";
 import { useIsMobile } from "@/app/hooks/use-mobile";
 import { cn } from "@/app/lib/utils";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
   AlertCircle,
   FilePen,
@@ -25,7 +17,14 @@ import {
   RocketIcon,
 } from "lucide-react";
 import Link from "next/link";
-import CoverLetterModal from "./CoverLetterModal";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../../../components/ui/dialog";
 import { SkillMatch } from "./SkillMatch";
 
 interface JobModalProps {
@@ -33,10 +32,12 @@ interface JobModalProps {
   onClose: () => void;
   setIsCoverLetter: (open: boolean) => void;
   selectedJobDetails: SelectedJob;
-  userDetails: UserDetails;
-  setAiCoverLetter: (value: string) => void;
-  generatingType: string;
-  setGeneratingType: (value: string) => void;
+  userDetails: UserDetails | null;
+  setAiCoverLetter: React.Dispatch<React.SetStateAction<string[]>>;
+  setGeneratingType: React.Dispatch<
+    React.SetStateAction<"resume" | "coverletter" | null>
+  >;
+  generatingType: "resume" | "coverletter" | null;
 }
 
 interface UserDetails {
@@ -56,6 +57,9 @@ interface SelectedJob {
   title: string;
   description: string;
   redirect_url: string;
+  location: string;
+  company: string;
+  display_name: string | [];
 }
 
 export function JobModal({

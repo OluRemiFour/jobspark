@@ -4,12 +4,13 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
+import Image from "next/image";
 
 const testimonials = [
   {
     name: "Sarah Johnson",
     position: "UX Designer at Adobe",
-    photo: "https://randomuser.me/api/portraits/women/32.jpg",
+    photo: "/img1.png",
     quote:
       "JobSpark AI helped me land my dream job at Adobe. The AI-powered resume builder highlighted my strongest skills, and I received 3 interview requests within a week!",
     rating: 5,
@@ -17,7 +18,7 @@ const testimonials = [
   {
     name: "Michael Chen",
     position: "Software Engineer at Microsoft",
-    photo: "https://randomuser.me/api/portraits/men/45.jpg",
+    photo: "/img2.png",
     quote:
       "After months of struggling, JobSpark's tailored job matches and personalized cover letter templates completely transformed my job search. I'm now working at Microsoft!",
     rating: 5,
@@ -25,7 +26,7 @@ const testimonials = [
   {
     name: "Emily Rodriguez",
     position: "Marketing Manager at Spotify",
-    photo: "https://randomuser.me/api/portraits/women/65.jpg",
+    photo: "/img3.png",
     quote:
       "The one-click apply feature saved me countless hours. I could apply to multiple positions that matched my profile with just a few clicks. Landed a job at Spotify in just 3 weeks!",
     rating: 5,
@@ -94,7 +95,7 @@ const Testimonials = () => {
               Success Stories
             </h2>
             <p className="max-w-[700px] text-gray-600 md:text-xl/relaxed dark:text-gray-400">
-              Hear from professionals who've transformed their careers with
+              Hear from professionals who&quot;ve transformed their careers with
               JobSpark AI.
             </p>
           </div>
@@ -132,7 +133,7 @@ const Testimonials = () => {
                     <div className="relative">
                       <Quote className="absolute top-0 left-0 h-10 w-10 text-black/10 dark:text-white/10 -translate-x-4 -translate-y-4" />
                       <p className="text-lg font-medium md:text-xl text-gray-800 dark:text-gray-200 italic">
-                        "{testimonials[current].quote}"
+                        &quot;{testimonials[current].quote}&quot;
                       </p>
                     </div>
                   </div>
@@ -154,7 +155,9 @@ const Testimonials = () => {
                     transition={{ delay: 0.2, duration: 0.4 }}
                     className="relative h-36 w-36 overflow-hidden rounded-full border-4 border-gray-200 dark:border-gray-800 shadow-lg"
                   >
-                    <img
+                    <Image
+                      width={150}
+                      height={150}
                       src={testimonials[current].photo}
                       alt={testimonials[current].name}
                       className="object-cover h-full w-full"

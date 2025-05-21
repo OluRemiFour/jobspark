@@ -98,8 +98,21 @@ interface UserDetails {
   isVerified: string;
   summary: string;
   jobTitle: string;
-  industry: stringl;
+  industry: string;
 }
+
+type ExperienceType = {
+  role: string;
+  company: string;
+  period: string;
+  location: string;
+  description: string;
+  // phone: string;
+  degree: string;
+  institution: string;
+  eduPeriod: string;
+  eduLocation: string;
+};
 
 const Profile = () => {
   const [loading, setLoading] = useState(true);
@@ -107,8 +120,61 @@ const Profile = () => {
   const [profile, setProfile] = useState(userProfile);
   const [userDetails, setUsetDetails] = useState<UserDetails | null>(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
+  // const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const [userProfileData, setUserProfileData] = useState<ExperienceType[]>([
+    {
+      role: "Your Role",
+      company: "Example Solution Inc.",
+      period: "From - To",
+      location: "123 Example St, YC",
+      description: "Role Description",
+      degree: "Master of Computer Science",
+      institution: "Stanford University",
+      eduPeriod: "From - To",
+      eduLocation: "Stanford, CA",
+    },
+    {
+      role: "Your Role",
+      company: "Example Solution Inc.",
+      period: "From - To",
+      location: "123 Example St, YC",
+      description: "Role Description",
+      degree: "Bachelor of Science in Web Development",
+      institution: "Stanford University",
+      eduPeriod: "From - To",
+      eduLocation: "California, CA",
+    },
+  ]);
+  const [userId, setUserId] = useState<string | null>();
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const storedData = localStorage.getItem(`userProfileData_${userId}`);
+    if (storedData && storedData !== "undefined") {
+      try {
+        const parsed = JSON.parse(storedData);
+        setUserProfileData(parsed);
+      } catch (err) {
+        console.error("Invalid JSON in localStorage", err);
+      }
+    }
+  }, [userId]);
+
+  const handleSaveToLocal = () => {
+    if (!userId) return;
+
+    // Save the userProfileData to localStorage
+    localStorage.setItem(
+      `userProfileData_${userId}`,
+      JSON.stringify(userProfileData)
+    );
+
+    setTimeout(() => {
+      toast.success("Profile updated successfully");
+    }, 1000);
+  };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -141,13 +207,23 @@ const Profile = () => {
 
       const response = request.data;
       if (response) {
-        console.log(response);
         setUsetDetails(response);
+      }
+
+      if (response && response._id) {
+        setUserId(response._id);
       }
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (userId) {
+      console.log("Updated userId:", userId);
+      // You can safely access userId here
+    }
+  }, [userId]);
 
   // Simulate loading
   useEffect(() => {
@@ -170,17 +246,17 @@ const Profile = () => {
 
   const handleCancel = () => {
     setEditMode(false);
-    setProfile(userProfile); // Reset to original data
+    setProfile(userProfile);
     toast("Edit cancelled", {
       description: "No changes were saved",
     });
   };
 
+  console.log(userProfileData.map((edu) => edu.degree));
+
   if (loading) {
     return <Loader />;
   }
-
-  console.log(userDetails);
 
   return (
     <div className="flex flex-col bg-gray-50 items-center justify-center min-h-screen">
@@ -259,9 +335,9 @@ const Profile = () => {
                     <button
                       className="text-white cursor-pointer"
                       onClick={handleEditClick}
-                      disabled={isUploading}
+                      // disabled={isUploading}
                     >
-                      {isUploading ? "Uploading..." : "Edit Profile Picture"}
+                      {/* {isUploading ? "Uploading..." : "Edit Profile Picture"} */}
                     </button>
                   </div>
                   <div className="">
@@ -281,10 +357,14 @@ const Profile = () => {
                       <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400 mr-2" />
                       <span className="text-sm">{userDetails?.email}</span>
                     </div>
-                    <div className="flex items-center">
+                    {/* <div className="flex items-center">
                       <Phone className="h-4 w-4 text-gray-500 dark:text-gray-400 mr-2" />
-                      <span className="text-sm">{profile.personal.phone}</span>
-                    </div>
+                      {userProfileData.map((data, index) => (
+                        <span key={index} className="text-sm">
+                          {data.phone}
+                        </span>
+                      ))}
+                    </div> */}
                     <div className="flex items-center">
                       <MapPin className="h-4 w-4 text-gray-500 dark:text-gray-400 mr-2" />
                       <span className="text-sm">{userDetails?.industry}</span>
@@ -339,9 +419,7 @@ const Profile = () => {
                           }
                         />
                       ) : (
-                        <p className="text-gray-700 dark:text-gray-300">
-                          {userDetails?.summary}
-                        </p>
+                        <p className="text-gray-700">{userDetails?.summary}</p>
                       )}
                     </CardContent>
                     {editMode && (
@@ -381,7 +459,110 @@ const Profile = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-6">
-                        {profile.experience.map((exp, index) => (
+                        <div className="">
+                          {userProfileData.map((exp, index) => (
+                            <div
+                              key={index}
+                              className="p-2 shadow-sm bg-gray-50"
+                            >
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {/* Role */}
+                                <div className="flex flex-col">
+                                  <label className="text-sm text-gray-600 mb-1">
+                                    Role
+                                  </label>
+                                  <input
+                                    className="p-1 rounded-md border outline-none focus:ring-2 focus:ring-indigo-500"
+                                    value={exp.role}
+                                    placeholder="Your role"
+                                    onChange={(e) => {
+                                      const updated = [...userProfileData];
+                                      updated[index].role = e.target.value;
+                                      setUserProfileData(updated);
+                                    }}
+                                  />
+                                </div>
+
+                                {/* Company */}
+                                <div className="flex flex-col">
+                                  <label className="text-sm text-gray-600 mb-1">
+                                    Company
+                                  </label>
+                                  <input
+                                    className="p-1 rounded-md border outline-none focus:ring-2 focus:ring-indigo-500"
+                                    value={exp.company}
+                                    placeholder="Company name"
+                                    onChange={(e) => {
+                                      const updated = [...userProfileData];
+                                      updated[index].company = e.target.value;
+                                      setUserProfileData(updated);
+                                    }}
+                                  />
+                                </div>
+
+                                {/* Period */}
+                                <div className="flex flex-col">
+                                  <label className="text-sm text-gray-600 mb-1">
+                                    Period
+                                  </label>
+                                  <input
+                                    className="p-1 rounded-md border outline-none focus:ring-2 focus:ring-indigo-500"
+                                    value={exp.period}
+                                    type="date"
+                                    placeholder="e.g., Jan 2020 - May 2023"
+                                    onChange={(e) => {
+                                      const updated = [...userProfileData];
+                                      updated[index].period = e.target.value;
+                                      setUserProfileData(updated);
+                                    }}
+                                  />
+                                </div>
+
+                                {/* Location */}
+                                <div className="flex flex-col">
+                                  <label className="text-sm text-gray-600 mb-1">
+                                    Location
+                                  </label>
+                                  <input
+                                    className="p-1 rounded-md border outline-none focus:ring-2 focus:ring-indigo-500"
+                                    value={exp.location}
+                                    placeholder="Location"
+                                    onChange={(e) => {
+                                      const updated = [...userProfileData];
+                                      updated[index].location = e.target.value;
+                                      setUserProfileData(updated);
+                                    }}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Description */}
+                              <div className="flex flex-col">
+                                <label className="text-sm text-gray-600 mb-1">
+                                  Description
+                                </label>
+                                <textarea
+                                  rows={2}
+                                  className="p-1 rounded-md border outline-none focus:ring-2 focus:ring-indigo-500"
+                                  value={exp.description}
+                                  placeholder="What did you do here?"
+                                  onChange={(e) => {
+                                    const updated = [...userProfileData];
+                                    updated[index].description = e.target.value;
+                                    setUserProfileData(updated);
+                                  }}
+                                />
+                              </div>
+
+                              {/* Separator */}
+                              {index < userProfileData.length - 1 && (
+                                <Separator className="my-4" />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* {profile.experience.map((exp, index) => (
                           <div key={index}>
                             <div className="flex flex-col sm:flex-row justify-between">
                               <div>
@@ -409,7 +590,7 @@ const Profile = () => {
                               <Separator className="my-4" />
                             )}
                           </div>
-                        ))}
+                        ))} */}
                       </div>
                     </CardContent>
                     {editMode && (
@@ -418,7 +599,8 @@ const Profile = () => {
                           <X className="h-4 w-4 mr-2" />
                           Cancel
                         </Button>
-                        <Button onClick={handleSave}>
+                        {/* <Button onClick={handleSave}> */}
+                        <Button onClick={handleSaveToLocal}>
                           <Save className="h-4 w-4 mr-2" />
                           Save Changes
                         </Button>
@@ -449,26 +631,62 @@ const Profile = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-6">
-                        {profile.education.map((edu, index) => (
+                        {userProfileData.map((edu, index) => (
                           <div key={index}>
                             <div className="flex flex-col sm:flex-row justify-between">
-                              <div>
-                                <h3 className="font-medium text-lg">
+                              <div className="w-fit space-y-2">
+                                {/* <h3 className="font-medium text-lg">
                                   {edu.degree}
-                                </h3>
-                                <p className="text-gray-500 dark:text-gray-400">
-                                  {edu.institution}
-                                </p>
-                              </div>
-                              <div className="text-gray-500 dark:text-gray-400 text-sm flex items-center mt-2 sm:mt-0">
-                                <Calendar className="h-4 w-4 mr-1 inline" />
-                                {edu.period}
+                                </h3> */}
+                                <div className="text-gray-500 flex items-center gap-2 dark:text-gray-400 text-sm">
+                                  <input
+                                    className="p-1 rounded-md w-full border outline-none focus:ring-2 focus:ring-indigo-500"
+                                    value={edu.degree}
+                                    onChange={(e) => {
+                                      const updated = [...userProfileData];
+                                      updated[index].degree = e.target.value;
+                                      setUserProfileData(updated);
+                                    }}
+                                  />
+                                </div>
+                                <div className="text-gray-500 flex items-center gap-2 dark:text-gray-400 text-sm">
+                                  <input
+                                    className="p-1 rounded-md border w-full outline-none focus:ring-2 focus:ring-indigo-500"
+                                    value={edu.institution}
+                                    onChange={(e) => {
+                                      const updated = [...userProfileData];
+                                      updated[index].institution =
+                                        e.target.value;
+                                      setUserProfileData(updated);
+                                    }}
+                                  />
+                                </div>
+                                <div className="text-gray-500 flex items-center gap-2 dark:text-gray-400 text-sm">
+                                  <input
+                                    className="p-1 rounded-md border w-full outline-none focus:ring-2 focus:ring-indigo-500"
+                                    value={edu.period}
+                                    type="date"
+                                    onChange={(e) => {
+                                      const updated = [...userProfileData];
+                                      updated[index].period = e.target.value;
+                                      setUserProfileData(updated);
+                                    }}
+                                  />
+                                </div>
                               </div>
                             </div>
-                            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                            <div className="text-gray-500 flex flex-row-reverse items-center gap-2 dark:text-gray-400 text-sm mt-1">
                               <MapPin className="h-4 w-4 mr-1 inline" />
-                              {edu.location}
-                            </p>
+                              <input
+                                className="p-1 rounded-md w-full border outline-none focus:ring-2 focus:ring-indigo-500"
+                                value={edu.eduLocation}
+                                onChange={(e) => {
+                                  const updated = [...userProfileData];
+                                  updated[index].eduLocation = e.target.value;
+                                  setUserProfileData(updated);
+                                }}
+                              />
+                            </div>
 
                             {index < profile.education.length - 1 && (
                               <Separator className="my-4" />
@@ -497,7 +715,7 @@ const Profile = () => {
                     <CardHeader>
                       <CardTitle className="flex justify-between items-center">
                         <span>Skills</span>
-                        {!editMode && (
+                        {/* {!editMode && (
                           <Button
                             variant="outline"
                             size="sm"
@@ -506,7 +724,7 @@ const Profile = () => {
                             <Edit className="h-4 w-4 mr-2" />
                             Edit
                           </Button>
-                        )}
+                        )} */}
                       </CardTitle>
                       <CardDescription>
                         Your technical and professional skills
@@ -514,14 +732,15 @@ const Profile = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="flex flex-wrap gap-2">
-                        {userDetails?.skills.map((skill, index) => (
+                        {/* {userDetails?.skills.map((skill, index) => (
                           <div
                             key={index}
                             className="bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1 text-sm"
                           >
                             {skill}
                           </div>
-                        ))}
+                        ))} */}
+                        <p>{userDetails?.skills}</p>
                       </div>
                     </CardContent>
                     {editMode && (

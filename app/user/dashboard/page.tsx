@@ -107,17 +107,25 @@ const Dashboard = () => {
         setUsr(response.data.data);
       }
       // return response.data;
-    } catch (error: any) {
-      console.error("API Error Details:", {
-        status: error.response?.status,
-        data: error.response?.data,
-      });
+    } catch (error: unknown) {
+      let message = "An error occurred";
 
-      throw new Error(
-        error.response?.data?.message ||
-          `Request failed with status ${error.response?.status}`
-      );
+      if (error instanceof Error) {
+        message = error.message;
+        console.error(message);
+      } else if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error
+      ) {
+        const err = error as { response?: { data?: string }; message?: string };
+        message = err.response?.data || err.message || message;
+        console.error(message);
+      } else {
+        console.error("Unknown error", error);
+      }
     }
+
     setLoading(false);
   };
 

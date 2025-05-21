@@ -22,7 +22,24 @@ export async function GET(req: Request) {
     if (response) {
       return NextResponse.json(response);
     }
-  } catch (error) {
-    console.log(error.message);
+  } catch (error: unknown) {
+    let message = "An error occurred";
+
+    if (error instanceof Error) {
+      message = error.message;
+      console.error(message);
+    } else if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error
+    ) {
+      const err = error as { response?: { data?: string }; message?: string };
+      message = err.response?.data || err.message || message;
+      console.error(message);
+    } else {
+      console.error("Unknown error", error);
+    }
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

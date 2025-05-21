@@ -13,47 +13,27 @@ import React, { useEffect, useState } from "react";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardFooter } from "../components/ui/card";
-import { toast } from "../hooks/use-toast";
 import CoverLetterModal from "../user/dashboard/components/CoverLetterModal";
 import { JobModal } from "../user/dashboard/components/JobModa";
 
 interface JobCardProps {
-  job: {
-    id: string;
-    title: string;
-    company: {
-      display_name: string;
-    };
-    location: {
-      display_name: string | [];
-    };
-    type: string;
-    salary: string;
-    posted: string;
-    skills: string[];
-    match: number;
-    min_salary: number;
-    salary_max: number;
-    created: string;
-    score: number;
-    isSaved: boolean;
-  };
+  job: Job;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   totalPages: number;
   className?: string;
   style?: React.CSSProperties;
   selectedJobDetails: SelectedJob;
-  onDetailsClick: (data: []) => void;
+  onDetailsClick: (data: Job) => void;
   saveUserJob: () => void;
-  isSaved: true | false;
+  isSaved: boolean;
+  userDetails: UserDetails | null;
+  setAiCoverLetter: React.Dispatch<React.SetStateAction<string[]>>;
+  setGeneratingType: React.Dispatch<
+    React.SetStateAction<"resume" | "coverletter" | null>
+  >;
+  generatingType: "resume" | "coverletter" | null;
 }
-export const applyToJob = ({ job }: any) => {
-  toast({
-    title: "Application submitted",
-    description: `Your application for ${job.title} at ${job.company} has been submitted.`,
-  });
-};
 
 interface SelectedJob {
   title: string;
@@ -66,6 +46,28 @@ interface UserDetails {
   name: string;
   email: string;
   isVerified: string;
+  redirect_url: string;
+}
+interface Job {
+  id: string;
+  title: string;
+  company: {
+    display_name: string;
+  };
+  location: {
+    display_name: string | [];
+  };
+  description: string;
+  type: string;
+  salary: string;
+  posted: string;
+  skills: string[];
+  score: number;
+  min_salary: number;
+  salary_max: number;
+  created: string;
+  redirect_url: string;
+  contract_type: string;
 }
 
 export const JobCard: React.FC<JobCardProps> = ({
@@ -165,11 +167,6 @@ export const JobCard: React.FC<JobCardProps> = ({
                           <Clock className="h-4 w-4 mr-1" />
                           <span>
                             Posted{" "}
-                            {/* {job?.posted || job?.created
-                              ? new Date(job?.created)
-                                  .toISOString()
-                                  .split("T")[0]
-                              : "N/A"} */}
                             {job?.created &&
                             !isNaN(new Date(job.created).getTime())
                               ? new Date(job.created)
@@ -239,7 +236,7 @@ export const JobCard: React.FC<JobCardProps> = ({
                 <Button
                   size="sm"
                   className="bg-black cursor-pointer text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-                  onClick={() => applyToJob(job)}
+                  // onClick={() => applyToJob(job)}
                 >
                   Apply Now
                 </Button>

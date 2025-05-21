@@ -16,7 +16,6 @@ import { useEffect, useState } from "react";
 import AIAssistant from "../../components/AIAssistant";
 import Footer from "../../components/Footer";
 import { Loader } from "../../components/Loader";
-import Navbar from "../../components/Navbar";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
