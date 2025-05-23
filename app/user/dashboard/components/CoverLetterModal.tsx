@@ -14,9 +14,9 @@ import TextEditor from "./TextEditor";
 interface CoverLetterModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  aiCoverLetter: string;
+  aiCoverLetter: string[];
   initialContent: string;
-  generatingType: string;
+  generatingType: string | null;
 }
 
 const CoverLetterModal: React.FC<CoverLetterModalProps> = ({

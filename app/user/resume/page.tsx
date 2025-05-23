@@ -86,7 +86,7 @@ const resumeSample = {
 };
 
 const Resume = () => {
-  const [activeTab, setActiveTab] = useState("resumes");
+  const [setActiveTab] = useState("resumes");
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">

@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Separator } from "../components/ui/separator";
+import Image from "next/image";
 
 const Employers = () => {
   const benefits = [
@@ -38,21 +39,21 @@ const Employers = () => {
   const testimonials = [
     {
       quote:
-        "JobSpark AI has revolutionized our hiring process. We've reduced our time-to-hire by 40% and improved quality of hire significantly.",
+        "'JobSpark AI has revolutionized our hiring process. We've reduced our time-to-hire by 40% and improved quality of hire significantly.'",
       author: "Sarah Johnson",
       title: "Head of Talent Acquisition",
       company: "TechCorp Inc.",
     },
     {
       quote:
-        "The quality of candidates we get through JobSpark AI is consistently high. Their AI matching technology is incredibly accurate.",
+        "'The quality of candidates we get through JobSpark AI is consistently high. Their AI matching technology is incredibly accurate.'",
       author: "Michael Chen",
       title: "Recruiting Manager",
       company: "InnovateCo",
     },
     {
       quote:
-        "We've saved thousands in recruitment costs while improving our hiring outcomes. JobSpark AI delivers on its promises.",
+        "'We've saved thousands in recruitment costs while improving our hiring outcomes. JobSpark AI delivers on its promises.'",
       author: "Jessica Williams",
       title: "HR Director",
       company: "Global Systems",
@@ -260,7 +261,9 @@ const Employers = () => {
                 transition={{ duration: 0.6 }}
                 className="flex-1"
               >
-                <img
+                <Image
+                  width={600}
+                  height={600}
                   src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
                   alt="Recruitment Dashboard"
                   className="rounded-lg shadow-lg"
@@ -308,7 +311,9 @@ const Employers = () => {
                           />
                         ))}
                       </div>
-                      <p className="italic mb-6">"{testimonial.quote}"</p>
+                      <p className="italic mb-6">
+                        &quot{testimonial.quote}&quot
+                      </p>
                       <div>
                         <p className="font-semibold">{testimonial.author}</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">

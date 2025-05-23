@@ -149,6 +149,8 @@ const Jobs = () => {
       );
     }
 
+    console.log(activeTab);
+
     // Apply location filters
     const activeLocationFilters = Object.entries(locationFilters)
       .filter(([_, value]) => value)

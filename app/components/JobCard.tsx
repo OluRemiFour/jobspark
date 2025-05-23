@@ -27,27 +27,44 @@ interface JobCardProps {
   onDetailsClick: (data: Job) => void;
   saveUserJob: () => void;
   isSaved: boolean;
-  userDetails: UserDetails | null;
+  userDetails: UserDetails;
   setAiCoverLetter: React.Dispatch<React.SetStateAction<string[]>>;
   setGeneratingType: React.Dispatch<
     React.SetStateAction<"resume" | "coverletter" | null>
   >;
   generatingType: "resume" | "coverletter" | null;
+  SelectedJob: SelectedJob;
+  aiCoverLetter: string[];
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isModalOpen: boolean;
 }
 
 interface SelectedJob {
   title: string;
   description: string;
   redirect_url: string;
+  company: string;
+  location: string;
+  display_name: string;
 }
 
 interface UserDetails {
   _id: string;
   name: string;
   email: string;
-  isVerified: string;
+  isVerified: boolean;
   redirect_url: string;
+  profilePicture: string;
+  skills: string[];
+  jobTitle: string;
+  yearsOfExperience: string;
+  industry: string;
+  summary: string;
+  createdAt: string;
+  updatedAt: string;
+  lastLoggedInAt: string;
 }
+
 interface Job {
   id: string;
   title: string;
@@ -82,9 +99,8 @@ export const JobCard: React.FC<JobCardProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCoverLetter, setIsCoverLetter] = useState(false);
   const [userDetails, setUsetDetails] = useState<UserDetails | null>(null);
-  const [aiCoverLetter, setAiCoverLetter] = useState<string[] | (() => void)>(
-    []
-  );
+  const [aiCoverLetter, setAiCoverLetter] = useState<string[]>(() => []);
+  // const initialContent = "";
   const [generatingType, setGeneratingType] = useState<
     "resume" | "coverletter" | null
   >(null);
@@ -194,9 +210,9 @@ export const JobCard: React.FC<JobCardProps> = ({
                   <div className="bg-white dark:bg-gray-700 rounded-full h-3 w-24 overflow-hidden">
                     <div
                       className={`h-full ${
-                        job?.match >= 90
+                        job?.score >= 90
                           ? "bg-black dark:bg-white"
-                          : job?.match >= 75
+                          : job?.score >= 75
                           ? "bg-gray-700 dark:bg-gray-300"
                           : "bg-gray-400 dark:bg-gray-500"
                       }`}
@@ -259,6 +275,7 @@ export const JobCard: React.FC<JobCardProps> = ({
 
       {isModalOpen && (
         <CoverLetterModal
+          // initialContent={initialContent}
           open={isCoverLetter}
           onOpenChange={setIsCoverLetter}
           aiCoverLetter={aiCoverLetter}

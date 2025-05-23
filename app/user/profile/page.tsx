@@ -1,17 +1,7 @@
 "use client";
-
 import axios from "axios";
 import { getCookie } from "cookies-next";
-import {
-  Calendar,
-  Camera,
-  Edit,
-  Mail,
-  MapPin,
-  Phone,
-  Save,
-  X,
-} from "lucide-react";
+import { Camera, Edit, Mail, MapPin, Save, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -119,8 +109,8 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [profile, setProfile] = useState(userProfile);
   const [userDetails, setUsetDetails] = useState<UserDetails | null>(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  // const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState();
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
   const [userProfileData, setUserProfileData] = useState<ExperienceType[]>([
     {
@@ -176,22 +166,80 @@ const Profile = () => {
     }, 1000);
   };
 
-  const handleFileChange = async (e) => {
+  // const handleEditClick = () => {
+  //   // Trigger file input for selecting a new image
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.click();
+  //   }
+  // };
+
+  const getProfilePicture = async () => {
+    const token = await getCookie("token");
+    const base_url = "/api/upload-user-profile";
+    try {
+      const request = await axios.get(base_url, {
+        headers: {
+          token: token,
+        },
+      });
+
+      const response = request.data;
+      if (response) {
+        // if (response?.profilePicture) {
+        //   const imageUrl = `https://jobai-0obv.onrender.com/uploads${response.profilePicture}`;
+        // }
+        setSelectedFile(response.profilePictureUrl);
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(selectedFile);
+
+  const uploadProfilePicture = async () => {
+    if (!selectedFile) {
+      toast.error("Please select a file to upload");
+      return;
+    }
+    const token = await getCookie("token");
+    const base_url = "/api/upload-user-profile";
+    const formData = new FormData();
+    formData.append("profilePicture", selectedFile);
+
+    // console.log("selected", formData);
+    setIsUploading(true);
+    try {
+      const request = await axios.post(base_url, formData, {
+        headers: {
+          token: token,
+          // "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const response = request.data;
+      if (response) {
+        toast.success("Profile picture uploaded successfully");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsUploading(false);
+  };
+
+  const handleFileChange = async ({ e }: any) => {
     const file = e.target.files[0];
     setSelectedFile(file);
-    console.log("Selected file:", file);
+    // Optionally, you can upload the file immediately after selection
+    // setIsUploading(true);
+    // await uploadProfilePicture(file);
+    // setIsUploading(false);
 
     // Automatically upload the image after selection
     // if (file) {
     //   await uploadProfilePicture(file);
     // }
-  };
-
-  const handleEditClick = () => {
-    // Trigger file input for selecting a new image
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
   };
 
   const handleGetUser = async () => {
@@ -220,14 +268,13 @@ const Profile = () => {
 
   useEffect(() => {
     if (userId) {
-      console.log("Updated userId:", userId);
-      // You can safely access userId here
     }
   }, [userId]);
 
   // Simulate loading
   useEffect(() => {
     handleGetUser();
+    getProfilePicture();
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1500);
@@ -251,8 +298,6 @@ const Profile = () => {
       description: "No changes were saved",
     });
   };
-
-  console.log(userProfileData.map((edu) => edu.degree));
 
   if (loading) {
     return <Loader />;
@@ -292,7 +337,7 @@ const Profile = () => {
                     </Button>
                   </div> */}
 
-                  <div>
+                  <div className="md:flex justify-between w-full gap-4 items-end mb-4">
                     <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 hover:bg-gray-500 relative">
                       <label
                         htmlFor="file-upload"
@@ -314,18 +359,18 @@ const Profile = () => {
                         />
                       </label>
 
-                      {selectedFile ? (
+                      {selectedFile instanceof File ? (
                         <Image
                           src={URL.createObjectURL(selectedFile)}
                           alt="Uploaded"
-                          className="w-full h-full object-cover hover:bg-gray-500"
                           width={200}
                           height={200}
+                          className="w-full h-full object-cover hover:bg-gray-500"
                         />
                       ) : (
                         <Image
-                          src={selectedFile ?? ""}
-                          alt="Default"
+                          src={selectedFile}
+                          alt="Uploaded"
                           width={200}
                           height={200}
                           className="w-full h-full object-cover hover:bg-gray-500"
@@ -333,11 +378,11 @@ const Profile = () => {
                       )}
                     </div>
                     <button
-                      className="text-white cursor-pointer"
-                      onClick={handleEditClick}
-                      // disabled={isUploading}
+                      className="cursor-pointer border text-xs py-1 px-4 rounded-md bg-gray-200 hover:bg-gray-500 text-gray-600 hover:text-white transition duration-300"
+                      onClick={uploadProfilePicture}
+                      disabled={isUploading}
                     >
-                      {/* {isUploading ? "Uploading..." : "Edit Profile Picture"} */}
+                      {isUploading ? "Uploading..." : "Upload"}
                     </button>
                   </div>
                   <div className="">
@@ -372,7 +417,7 @@ const Profile = () => {
                   </div>
 
                   <Separator className="my-4" />
-
+                  {/* 
                   <Button
                     onClick={handleEdit}
                     className="w-full"
@@ -380,7 +425,7 @@ const Profile = () => {
                   >
                     <Edit className="h-4 w-4 mr-2" />
                     Edit Profile
-                  </Button>
+                  </Button> */}
                 </div>
               </CardContent>
             </Card>
