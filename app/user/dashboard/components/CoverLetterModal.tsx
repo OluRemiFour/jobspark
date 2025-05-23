@@ -15,7 +15,7 @@ interface CoverLetterModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   aiCoverLetter: string[];
-  initialContent: string;
+  initialContent?: string;
   generatingType: string | null;
 }
 
