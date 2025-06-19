@@ -18,6 +18,7 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
     }
@@ -28,7 +29,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "tailwind.config.js",
-    "tailwind.config.ts"
-, "app/api/signup/route.ts"  ],
+    "tailwind.config.ts",
+    "app/api/signup/route.ts"
+  ],
   "exclude": ["node_modules"]
 }
