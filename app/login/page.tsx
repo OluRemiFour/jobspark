@@ -19,8 +19,8 @@ import { Label } from "../components/ui/label";
 import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-  const [email, setEmail] = useState("midtest@gmail.com");
-  const [password, setPassword] = useState("Text@123456");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { login, isLoading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
