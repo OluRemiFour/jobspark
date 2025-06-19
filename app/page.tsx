@@ -35,7 +35,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Loader } from "./components/Loader";
-import Index from "@/app/index/page";
+import Welcome from "@/app/welcome/page";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -52,5 +52,5 @@ export default function Home() {
     return <Loader message="Loading JobSpark..." />;
   }
 
-  return <Index />;
+  return <Welcome />;
 }

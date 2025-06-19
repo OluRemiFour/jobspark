@@ -11,6 +11,7 @@ import { Input } from "./input";
 import { Separator } from "./separator";
 import { Sheet, SheetContent } from "./sheet";
 import { Skeleton } from "./skeleton";
+import { createContext } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -46,7 +47,7 @@ type SidebarContext = {
   toggleSidebar: () => void;
 };
 
-const SidebarContext = React.createContext<SidebarContext | null>(null);
+const SidebarContext = createContext<SidebarContext | null>(null);
 
 function useSidebar() {
   const context = React.useContext(SidebarContext);

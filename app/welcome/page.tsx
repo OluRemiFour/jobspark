@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 // import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
@@ -8,7 +9,7 @@ import CTA from "../components/CTA";
 import Footer from "../components/Footer";
 import AIAssistant from "../components/AIAssistant";
 
-const Index = () => {
+const Welcome = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* <Navbar /> */}
@@ -25,4 +26,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Welcome;

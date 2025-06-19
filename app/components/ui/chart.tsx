@@ -1,7 +1,7 @@
 import { cn } from "@/app/lib/utils";
 import * as React from "react";
 import * as RechartsPrimitive from "recharts";
-
+import { createContext } from "react";
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const;
 
@@ -19,7 +19,7 @@ type ChartContextProps = {
   config: ChartConfig;
 };
 
-const ChartContext = React.createContext<ChartContextProps | null>(null);
+const ChartContext = createContext<ChartContextProps | null>(null);
 
 function useChart() {
   const context = React.useContext(ChartContext);
